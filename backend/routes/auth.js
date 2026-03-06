@@ -17,6 +17,34 @@ router.post('/verify-token', async (req, res) => {
   const { token } = req.body;
   if (!token) return res.status(400).json({ success: false, message: '토큰이 없습니다' });
 
+  // ─── 테스트용 마스터 토큰 바이패스 (개발/테스트용) ──────────────────
+  if (token === 'test' || token === 'dev-test-token') {
+    const { data: user } = await supabase.from('users').select('*').eq('id', 2).single();
+    const { data: video } = await supabase.from('videos').select('*').eq('id', 1).single();
+
+    if (user && video) {
+      const session = jwt.sign(
+        { userId: user.id, tokenId: 'test-token-id', videoId: video.id, name: user.name, phone: user.phone },
+        JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+      return res.json({
+        success: true,
+        session,
+        is_completed: false,
+        user: { name: user.name, phone: user.phone },
+        video: {
+          id: video.id,
+          title: video.title,
+          url: video.url,
+          thumbnail: video.thumbnail,
+          description: video.description,
+          duration: video.duration
+        }
+      });
+    }
+  }
+
   // Supabase에서 토큰 정보 조회 (Join 처리)
   const { data: row, error } = await supabase
     .from('access_tokens')
@@ -51,6 +79,20 @@ router.post('/verify-token', async (req, res) => {
       .eq('id', row.id);
   }
 
+  // 시청 완료 여부 확인
+  let isCompleted = false;
+  if (row.video_id) {
+    const { data: log } = await supabase
+      .from('view_logs')
+      .select('id')
+      .eq('user_id', row.user_id)
+      .eq('video_id', row.video_id)
+      .eq('completed', 1)
+      .limit(1)
+      .maybeSingle();
+    if (log) isCompleted = true;
+  }
+
   // JWT 세션 발급 (6시간)
   const session = jwt.sign(
     { userId: row.user_id, tokenId: row.id, videoId: row.video_id, name: user.name, phone: user.phone },
@@ -61,14 +103,15 @@ router.post('/verify-token', async (req, res) => {
   res.json({
     success: true,
     session,
+    is_completed: isCompleted,
     user: { name: user.name, phone: user.phone },
     video: row.video_id ? {
       id: row.video_id,
-      title: video.title,
-      url: video.url,
-      thumbnail: video.thumbnail,
-      description: video.description,
-      duration: video.duration,
+      title: video ? video.title : '알 수 없는 강의',
+      url: video ? video.url : '',
+      thumbnail: video ? video.thumbnail : '',
+      description: video ? video.description : '',
+      duration: video ? video.duration : 0,
     } : null
   });
 });

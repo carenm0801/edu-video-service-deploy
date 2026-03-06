@@ -1,436 +1,1406 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduVideo 교육동영상 서비스</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0a0e1a;--surface:#111827;--card:#1a2235;
-  --accent:#3b82f6;--accent2:#8b5cf6;
-  --text:#e2e8f0;--muted:#64748b;--border:#1e3a5f;
-  --success:#10b981;--danger:#ef4444;--warn:#f59e0b;
-}
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
-.hidden{display:none!important}
-.btn{padding:9px 18px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s;font-family:inherit}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#2563eb;transform:translateY(-1px)}
-.btn-danger{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
-.btn-danger:hover{background:var(--danger);color:#fff}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
-.btn-ghost:hover{color:var(--text);border-color:var(--accent)}
-.btn-sm{padding:5px 12px;font-size:12px}
-input,select,textarea{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 13px;border-radius:8px;width:100%;font-size:13px;font-family:inherit;transition:border .2s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
-label{font-size:12px;color:var(--muted);margin-bottom:5px;display:block;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.form-group{margin-bottom:16px}
-.card{background:var(--card);border-radius:12px;padding:24px;border:1px solid var(--border)}
-.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.tag-success{background:rgba(16,185,129,.15);color:var(--success)}
-.tag-danger{background:rgba(239,68,68,.15);color:var(--danger)}
-.tag-blue{background:rgba(59,130,246,.15);color:var(--accent)}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduVideo 교육동영상 서비스</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-/* LOGIN */
-#loginPage{display:flex;align-items:center;justify-content:center;min-height:100vh;
-  background:radial-gradient(ellipse at 65% 35%,rgba(59,130,246,.15) 0%,transparent 55%),
-  radial-gradient(ellipse at 20% 75%,rgba(139,92,246,.12) 0%,transparent 50%),var(--bg)}
-.login-box{width:360px}
-.login-logo{text-align:center;font-size:48px;margin-bottom:6px}
-.login-title{text-align:center;font-size:26px;font-weight:800;margin-bottom:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.login-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:28px}
-#loginError{color:var(--danger);font-size:12px;margin-top:10px;display:none;padding:10px;background:rgba(239,68,68,.1);border-radius:6px}
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --card: #1a2235;
+      --accent: #3b82f6;
+      --accent2: #8b5cf6;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --border: #1e3a5f;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+    }
 
-/* WATCH */
-#watchPage{min-height:100vh}
-.watch-header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border)}
-.watch-logo{font-size:18px;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.user-badge{background:var(--card);padding:6px 14px;border-radius:20px;font-size:13px;border:1px solid var(--border)}
-.watch-body{max-width:920px;margin:0 auto;padding:32px 20px}
-.video-wrap{background:#000;border-radius:14px;overflow:hidden;aspect-ratio:16/9;margin-bottom:24px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.video-wrap video{width:100%;height:100%}
-.video-info h1{font-size:22px;font-weight:800}
-.video-info p{color:var(--muted);margin-top:8px;line-height:1.7}
-.error-box{text-align:center;padding:80px 20px}
-.error-box .icon{font-size:56px;margin-bottom:16px}
-.error-box h2{font-size:22px;font-weight:800;margin-bottom:8px}
-.error-box p{color:var(--muted)}
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px
+    }
 
-/* ADMIN */
-#adminPage{display:flex;min-height:100vh}
-.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.sidebar-logo{padding:20px 22px;font-size:17px;font-weight:800;border-bottom:1px solid var(--border);background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sidebar-menu{flex:1;padding:10px 0}
-.menu-item{display:flex;align-items:center;gap:10px;padding:11px 22px;cursor:pointer;color:var(--muted);transition:.2s;border-left:3px solid transparent}
-.menu-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
-.menu-item.active{color:var(--accent);background:rgba(59,130,246,.07);border-left-color:var(--accent);font-weight:600}
-.menu-icon{width:18px;text-align:center}
-.sidebar-footer{padding:16px;border-top:1px solid var(--border)}
-.logout-btn{width:100%;background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit}
-.logout-btn:hover{color:var(--danger);border-color:var(--danger)}
-.main-content{flex:1;overflow:auto}
-.page-header{padding:22px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.page-header-left h2{font-size:18px;font-weight:800}
-.page-header-left p{font-size:12px;color:var(--muted);margin-top:2px}
-.page-actions{display:flex;gap:8px;align-items:center}
-.content-body{padding:24px 28px}
+    .hidden {
+      display: none !important
+    }
 
-/* STATS */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-.stat-card{background:var(--card);border-radius:12px;padding:20px;border:1px solid var(--border)}
-.stat-icon{font-size:22px;margin-bottom:10px}
-.stat-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.stat-value{font-size:30px;font-weight:800;margin-top:4px}
+    .btn {
+      padding: 9px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all .2s;
+      font-family: inherit
+    }
 
-/* TABLE */
-.table-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden}
-table{width:100%;border-collapse:collapse}
-th{background:rgba(0,0,0,.2);padding:11px 16px;text-align:left;color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
-td{padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.02)}
-.empty-row td{text-align:center;color:var(--muted);padding:32px}
+    .btn-primary {
+      background: var(--accent);
+      color: #fff
+    }
 
-/* SEND */
-.send-form{background:var(--card);border-radius:12px;padding:24px;border:1px solid var(--border);max-width:520px}
-.radio-group{display:flex;gap:8px;flex-wrap:wrap}
-.radio-opt{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:13px;background:var(--surface)}
-.radio-opt input{width:auto}
-.send-result{margin-top:16px;padding:16px;border-radius:10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);display:none}
-.url-copy{display:flex;gap:8px;margin-top:8px}
-.url-copy input{font-family:'Courier New',monospace;font-size:11px}
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: translateY(-1px)
+    }
 
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(6px)}
-.modal{background:var(--card);border-radius:14px;padding:28px;width:500px;border:1px solid var(--border);max-height:85vh;overflow-y:auto}
-.modal h3{font-size:17px;font-weight:800;margin-bottom:20px}
-.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-</style>
+    .btn-danger {
+      background: rgba(239, 68, 68, .15);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, .3)
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border)
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--accent)
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px
+    }
+
+    input,
+    select,
+    textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 13px;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 13px;
+      font-family: inherit;
+      transition: border .2s
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, .1)
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      display: block;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .form-group {
+      margin-bottom: 16px
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border)
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700
+    }
+
+    .tag-success {
+      background: rgba(16, 185, 129, .15);
+      color: var(--success)
+    }
+
+    .tag-danger {
+      background: rgba(239, 68, 68, .15);
+      color: var(--danger)
+    }
+
+    .tag-blue {
+      background: rgba(59, 130, 246, .15);
+      color: var(--accent)
+    }
+
+    /* LOGIN */
+    #loginPage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 65% 35%, rgba(59, 130, 246, .15) 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 75%, rgba(139, 92, 246, .12) 0%, transparent 50%), var(--bg)
+    }
+
+    .login-box {
+      width: 360px
+    }
+
+    .login-logo {
+      text-align: center;
+      font-size: 48px;
+      margin-bottom: 6px
+    }
+
+    .login-title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent
+    }
+
+    .login-sub {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px
+    }
+
+    #loginError {
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+      padding: 10px;
+      background: rgba(239, 68, 68, .1);
+      border-radius: 6px
+    }
+
+    /* WATCH */
+    #watchPage {
+      min-height: 100vh
+    }
+
+    .watch-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border)
+    }
+
+    .watch-logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent
+    }
+
+    .user-badge {
+      background: var(--card);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      border: 1px solid var(--border)
+    }
+
+    .watch-body {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px
+    }
+
+    .video-wrap {
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      margin-bottom: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .6)
+    }
+
+    .video-wrap video {
+      width: 100%;
+      height: 100%
+    }
+
+    .video-info h1 {
+      font-size: 22px;
+      font-weight: 800
+    }
+
+    .video-info p {
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.7
+    }
+
+    .error-box {
+      text-align: center;
+      padding: 80px 20px
+    }
+
+    .error-box .icon {
+      font-size: 56px;
+      margin-bottom: 16px
+    }
+
+    .error-box h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px
+    }
+
+    .error-box p {
+      color: var(--muted)
+    }
+
+    /* ADMIN */
+    #adminPage {
+      display: flex;
+      min-height: 100vh
+    }
+
+    .sidebar {
+      width: 220px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0
+    }
+
+    .sidebar-logo {
+      padding: 20px 22px;
+      font-size: 17px;
+      font-weight: 800;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      padding: 10px 0
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 22px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: .2s;
+      border-left: 3px solid transparent
+    }
+
+    .menu-item:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, .03)
+    }
+
+    .menu-item.active {
+      color: var(--accent);
+      background: rgba(59, 130, 246, .07);
+      border-left-color: var(--accent);
+      font-weight: 600
+    }
+
+    .menu-icon {
+      width: 18px;
+      text-align: center
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border)
+    }
+
+    .logout-btn {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit
+    }
+
+    .logout-btn:hover {
+      color: var(--danger);
+      border-color: var(--danger)
+    }
+
+    .main-content {
+      flex: 1;
+      overflow: auto
+    }
+
+    .page-header {
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .page-header-left h2 {
+      font-size: 18px;
+      font-weight: 800
+    }
+
+    .page-header-left p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .content-body {
+      padding: 24px 28px
+    }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px
+    }
+
+    .stat-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border)
+    }
+
+    .stat-icon {
+      font-size: 22px;
+      margin-bottom: 10px
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .stat-value {
+      font-size: 30px;
+      font-weight: 800;
+      margin-top: 4px
+    }
+
+    /* TABLE */
+    .table-wrap {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    th {
+      background: rgba(0, 0, 0, .2);
+      padding: 11px 16px;
+      text-align: left;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .04);
+      vertical-align: middle
+    }
+
+    tr:last-child td {
+      border-bottom: none
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .empty-row td {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px
+    }
+
+    /* SEND */
+    .send-form {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      max-width: 520px
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .radio-opt {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+      background: var(--surface)
+    }
+
+    .radio-opt input {
+      width: auto
+    }
+
+    .send-result {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, .08);
+      border: 1px solid rgba(16, 185, 129, .25);
+      display: none
+    }
+
+    .url-copy {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px
+    }
+
+    .url-copy input {
+      font-family: 'Courier New', monospace;
+      font-size: 11px
+    }
+
+    /* MODAL */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      backdrop-filter: blur(6px)
+    }
+
+    .modal {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 28px;
+      width: 500px;
+      border: 1px solid var(--border);
+      max-height: 85vh;
+      overflow-y: auto
+    }
+
+    .modal h3 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 20px
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border)
+    }
+
+    /* COMPLETED */
+    .completed-box {
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(16, 185, 129, .05);
+      border-radius: 14px;
+      border: 1px dashed var(--success)
+    }
+
+    .completed-box .icon {
+      font-size: 64px;
+      margin-bottom: 20px
+    }
+
+    .completed-box h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--success);
+      margin-bottom: 12px
+    }
+
+    .completed-box p {
+      color: var(--muted);
+      margin-bottom: 24px
+    }
+
+    /* QUIZ */
+    #quizPage {
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 32px 20px;
+    }
+
+    .quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .quiz-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .quiz-header h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .quiz-item {
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .quiz-q {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quiz-opt {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-opt:hover {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .quiz-opt input {
+      width: auto;
+    }
+
+    .quiz-opt.selected {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .quiz-footer {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 40px 20px;
+      border-radius: 16px;
+      border: 2px solid;
+    }
+
+    .result-pass {
+      border-color: var(--success);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .result-fail {
+      border-color: var(--danger);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    @media (max-width: 768px) {
+      .watch-header {
+        padding: 12px 16px;
+      }
+
+      .watch-logo {
+        font-size: 16px;
+      }
+
+      .user-badge {
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+
+      .watch-body {
+        padding: 16px 0;
+        /* 좌우 여백 제거로 영상 강조 */
+      }
+
+      .video-wrap {
+        border-radius: 0;
+        /* 모바일 전면 배치 */
+        margin-bottom: 16px;
+      }
+
+      .video-info {
+        padding: 0 20px;
+      }
+
+      .video-info h1 {
+        font-size: 18px;
+        line-height: 1.4;
+      }
+
+      .video-info p {
+        font-size: 13px;
+      }
+
+      .completed-box {
+        margin: 0 20px;
+        padding: 40px 15px;
+      }
+
+      /* Admin Sidebar Mobile (기본 숨김/간소화) */
+      #adminPage {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-menu {
+        display: flex;
+        overflow-x: auto;
+        padding: 0;
+      }
+
+      .menu-item {
+        padding: 12px 15px;
+        white-space: nowrap;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+      }
+
+      .menu-item.active {
+        border-left: none;
+        border-bottom-color: var(--accent);
+      }
+
+      .sidebar-footer,
+      .sidebar-logo {
+        display: none;
+      }
+
+      .page-header {
+        padding: 15px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- LOGIN -->
-<div id="loginPage">
-  <div class="login-box">
-    <div class="login-logo">&#127891;</div>
-    <div class="login-title">EduVideo</div>
-    <div class="login-sub">교육동영상 관리 시스템</div>
-    <div class="card">
-      <div class="form-group"><label>아이디</label><input id="loginId" type="text" value="admin"></div>
-      <div class="form-group"><label>비밀번호</label><input id="loginPw" type="password" value="admin1234"></div>
-      <button class="btn btn-primary" style="width:100%;padding:12px;font-size:15px" onclick="doLogin()">로그인</button>
-      <div id="loginError">아이디 또는 비밀번호가 틀렸습니다.</div>
+  <!-- LOGIN -->
+  <div id="loginPage">
+    <div class="login-box">
+      <div class="login-logo">&#127891;</div>
+      <div class="login-title">EduVideo</div>
+      <div class="login-sub">교육동영상 관리 시스템</div>
+      <div class="card">
+        <div class="form-group"><label>아이디</label><input id="loginId" type="text" value="admin"></div>
+        <div class="form-group"><label>비밀번호</label><input id="loginPw" type="password" value="admin1234"></div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;font-size:15px" onclick="doLogin()">로그인</button>
+        <div id="loginError">아이디 또는 비밀번호가 틀렸습니다.</div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- WATCH -->
-<div id="watchPage" class="hidden">
-  <div class="watch-header">
-    <div class="watch-logo">&#127891; EduVideo</div>
-    <div id="watchUserBadge" class="user-badge"></div>
-  </div>
-  <div class="watch-body" id="watchBody">
-    <div class="video-wrap" id="videoWrap"><video id="videoPlayer" controls controlsList="nodownload" oncontextmenu="return false"><source id="videoSrc" type="video/mp4"></video></div>
-    <div class="video-info"><h1 id="videoTitle"></h1><p id="videoDesc"></p></div>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div id="adminPage" class="hidden">
-  <div class="sidebar">
-    <div class="sidebar-logo">&#127891; EduVideo</div>
-    <div class="sidebar-menu">
-      <div class="menu-item active" data-tab="dashboard" onclick="showTab('dashboard')"><span class="menu-icon">&#128202;</span><span>대시보드</span></div>
-      <div class="menu-item" data-tab="users" onclick="showTab('users')"><span class="menu-icon">&#128101;</span><span>수강생 관리</span></div>
-      <div class="menu-item" data-tab="videos" onclick="showTab('videos')"><span class="menu-icon">&#127909;</span><span>동영상 관리</span></div>
-      <div class="menu-item" data-tab="send" onclick="showTab('send')"><span class="menu-icon">&#128232;</span><span>링크 발송</span></div>
-      <div class="menu-item" data-tab="logs" onclick="showTab('logs')"><span class="menu-icon">&#128203;</span><span>발송 이력</span></div>
+  <!-- WATCH -->
+  <div id="watchPage" class="hidden">
+    <div class="watch-header">
+      <div class="watch-logo">&#127891; EduVideo</div>
+      <div id="watchUserBadge" class="user-badge"></div>
     </div>
-    <div class="sidebar-footer"><button class="logout-btn" onclick="doLogout()">로그아웃</button></div>
-  </div>
+    <div class="watch-body" id="watchBody">
+      <!-- 비디오 재생 영역 -->
+      <div id="videoContainer">
+        <div class="video-wrap" id="videoWrap"><video id="videoPlayer" controls controlsList="nodownload"
+            oncontextmenu="return false">
+            <source id="videoSrc" type="video/mp4">
+          </video></div>
+        <div class="video-info">
+          <h1 id="videoTitle"></h1>
+          <p id="videoDesc"></p>
+        </div>
+      </div>
 
-  <div class="main-content">
-    <!-- 대시보드 -->
-    <div id="tab-dashboard">
-      <div class="page-header"><div class="page-header-left"><h2>대시보드</h2><p>전체 현황</p></div></div>
-      <div class="content-body">
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-icon">&#128101;</div><div class="stat-label">수강생</div><div class="stat-value" id="statUsers">-</div></div>
-          <div class="stat-card"><div class="stat-icon">&#127909;</div><div class="stat-label">동영상</div><div class="stat-value" id="statVideos">-</div></div>
-          <div class="stat-card"><div class="stat-icon">&#128232;</div><div class="stat-label">총 발송</div><div class="stat-value" id="statSent">-</div></div>
-          <div class="stat-card"><div class="stat-icon">&#9654;</div><div class="stat-label">총 시청</div><div class="stat-value" id="statViews">-</div></div>
-        </div>
-        <div class="card"><h3 style="font-size:15px;font-weight:700;margin-bottom:16px">최근 발송 이력</h3>
-          <table><thead><tr><th>수강생</th><th>전화번호</th><th>방식</th><th>상태</th><th>발송시각</th></tr></thead>
-          <tbody id="recentSends"><tr class="empty-row"><td colspan="5">데이터 없음</td></tr></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 수강생 -->
-    <div id="tab-users" class="hidden">
-      <div class="page-header">
-        <div class="page-header-left"><h2>수강생 관리</h2><p>수강생 등록 및 관리</p></div>
-        <div class="page-actions">
-          <input id="userSearch" placeholder="이름/전화번호 검색" style="width:180px" oninput="loadUsers()">
-          <button class="btn btn-primary" onclick="openUserModal()">+ 등록</button>
-        </div>
-      </div>
-      <div class="content-body">
-        <div class="table-wrap">
-          <table><thead><tr><th><input type="checkbox" id="checkAll" onchange="toggleAllCheck()"></th><th>이름</th><th>전화번호</th><th>이메일</th><th>상태</th><th>등록일</th><th>관리</th></tr></thead>
-          <tbody id="usersTable"><tr class="empty-row"><td colspan="7">수강생이 없습니다</td></tr></tbody></table>
-        </div>
-        <div style="margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="sendSelectedUsers()">&#9993; 선택 발송</button></div>
-      </div>
-    </div>
-
-    <!-- 동영상 -->
-    <div id="tab-videos" class="hidden">
-      <div class="page-header">
-        <div class="page-header-left"><h2>동영상 관리</h2><p>교육 동영상 등록 및 관리</p></div>
-        <div class="page-actions"><button class="btn btn-primary" onclick="openVideoModal()">+ 등록</button></div>
-      </div>
-      <div class="content-body">
-        <div class="table-wrap">
-          <table><thead><tr><th>제목</th><th>카테고리</th><th>재생시간</th><th>상태</th><th>등록일</th><th>관리</th></tr></thead>
-          <tbody id="videosTable"><tr class="empty-row"><td colspan="6">동영상이 없습니다</td></tr></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 발송 -->
-    <div id="tab-send" class="hidden">
-      <div class="page-header"><div class="page-header-left"><h2>링크 발송</h2><p>수강생에게 동영상 링크 발송</p></div></div>
-      <div class="content-body">
-        <div class="send-form">
-          <div class="form-group"><label>수강생 선택</label><select id="sendUser"><option value="">-- 선택 --</option></select></div>
-          <div class="form-group"><label>동영상 선택 (미선택시 전체 접근)</label><select id="sendVideo"><option value="">전체 강의 접근</option></select></div>
-          <div class="form-group"><label>링크 유효기간</label>
-            <select id="sendExpires"><option value="24">24시간</option><option value="48">48시간</option><option value="72">72시간</option><option value="168">7일</option></select>
+      <!-- QUIZ SECTION (New) -->
+      <div id="quizSection" class="hidden"
+        style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
+        <div class="quiz-container">
+          <div class="quiz-header">
+            <h2>✏️ 교육 평가 퀴즈</h2>
+            <p style="color:var(--muted); font-size:14px;">5문제 중 4문제(80%) 이상 맞춰야 완료됩니다.</p>
           </div>
-          <div class="form-group"><label>발송 방식</label>
-            <div class="radio-group">
-              <label class="radio-opt"><input type="radio" name="sendType" value="sms" checked> SMS 문자</label>
-              <label class="radio-opt"><input type="radio" name="sendType" value="kakao"> 카카오톡</label>
-              <label class="radio-opt"><input type="radio" name="sendType" value="both"> SMS+카카오</label>
+          <div id="quizList"></div>
+          <div class="quiz-footer">
+            <button class="btn btn-primary" style="width:100%; padding:15px; font-size:16px;"
+              onclick="submitQuiz()">제출하기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ RESULT SECTION (New) -->
+      <div id="quizResultSection" class="hidden"
+        style="margin-top:20px; padding:20px; border-top:1px solid var(--border);">
+        <div class="quiz-container" id="quizResultContent"></div>
+      </div>
+
+      <!-- 수강 완료 영역 -->
+      <div id="completedBox" class="completed-box hidden">
+        <div class="icon">&#127882;</div>
+        <h2>교육 이수를 축하드립니다!</h2>
+        <p id="completedInfo"></p>
+        <button class="btn btn-ghost" onclick="location.reload()">다시보기</button>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="adminPage" class="hidden">
+      <div class="sidebar">
+        <div class="sidebar-logo">&#127891; EduVideo</div>
+        <div class="sidebar-menu">
+          <div class="menu-item active" data-tab="dashboard" onclick="showTab('dashboard')"><span
+              class="menu-icon">&#128202;</span><span>대시보드</span></div>
+          <div class="menu-item" data-tab="users" onclick="showTab('users')"><span
+              class="menu-icon">&#128101;</span><span>수강생 관리</span></div>
+          <div class="menu-item" data-tab="videos" onclick="showTab('videos')"><span
+              class="menu-icon">&#127909;</span><span>동영상 관리</span></div>
+          <div class="menu-item" data-tab="send" onclick="showTab('send')"><span
+              class="menu-icon">&#128232;</span><span>링크 발송</span></div>
+          <div class="menu-item" data-tab="logs" onclick="showTab('logs')"><span
+              class="menu-icon">&#128203;</span><span>발송 이력</span></div>
+        </div>
+        <div class="sidebar-footer"><button class="logout-btn" onclick="doLogout()">로그아웃</button></div>
+      </div>
+
+      <div class="main-content">
+        <!-- 대시보드 -->
+        <div id="tab-dashboard">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h2>대시보드</h2>
+              <p>전체 현황</p>
             </div>
           </div>
-          <button class="btn btn-primary" style="width:100%;padding:12px" onclick="doSend()">링크 발송하기</button>
-          <div class="send-result" id="sendResult">
-            <div style="color:var(--success);font-weight:700;margin-bottom:10px">발송 완료!</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">시청 URL (직접 공유 가능)</div>
-            <div class="url-copy"><input id="watchUrlField" readonly><button class="btn btn-ghost btn-sm" style="white-space:nowrap" onclick="copyUrl()">복사</button></div>
+          <div class="content-body">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">&#128101;</div>
+                <div class="stat-label">수강생</div>
+                <div class="stat-value" id="statUsers">-</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">&#127909;</div>
+                <div class="stat-label">동영상</div>
+                <div class="stat-value" id="statVideos">-</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">&#128232;</div>
+                <div class="stat-label">총 발송</div>
+                <div class="stat-value" id="statSent">-</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">&#9654;</div>
+                <div class="stat-label">총 시청</div>
+                <div class="stat-value" id="statViews">-</div>
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">최근 발송 이력</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>수강생</th>
+                    <th>전화번호</th>
+                    <th>방식</th>
+                    <th>상태</th>
+                    <th>발송시각</th>
+                  </tr>
+                </thead>
+                <tbody id="recentSends">
+                  <tr class="empty-row">
+                    <td colspan="5">데이터 없음</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 수강생 -->
+        <div id="tab-users" class="hidden">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h2>수강생 관리</h2>
+              <p>수강생 등록 및 관리</p>
+            </div>
+            <div class="page-actions">
+              <input id="userSearch" placeholder="이름/전화번호 검색" style="width:180px" oninput="loadUsers()">
+              <button class="btn btn-primary" onclick="openUserModal()">+ 등록</button>
+            </div>
+          </div>
+          <div class="content-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="checkAll" onchange="toggleAllCheck()"></th>
+                    <th>이름</th>
+                    <th>전화번호</th>
+                    <th>이메일</th>
+                    <th>상태</th>
+                    <th>등록일</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTable">
+                  <tr class="empty-row">
+                    <td colspan="7">수강생이 없습니다</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="sendSelectedUsers()">&#9993; 선택
+                발송</button></div>
+          </div>
+        </div>
+
+        <!-- 동영상 -->
+        <div id="tab-videos" class="hidden">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h2>동영상 관리</h2>
+              <p>교육 동영상 등록 및 관리</p>
+            </div>
+            <div class="page-actions"><button class="btn btn-primary" onclick="openVideoModal()">+ 등록</button></div>
+          </div>
+          <div class="content-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>제목</th>
+                    <th>카테고리</th>
+                    <th>재생시간</th>
+                    <th>상태</th>
+                    <th>등록일</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody id="videosTable">
+                  <tr class="empty-row">
+                    <td colspan="6">동영상이 없습니다</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 발송 -->
+        <div id="tab-send" class="hidden">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h2>링크 발송</h2>
+              <p>수강생에게 동영상 링크 발송</p>
+            </div>
+          </div>
+          <div class="content-body">
+            <div class="send-form">
+              <div class="form-group"><label>수강생 선택</label><select id="sendUser">
+                  <option value="">-- 선택 --</option>
+                </select></div>
+              <div class="form-group"><label>동영상 선택 (미선택시 전체 접근)</label><select id="sendVideo">
+                  <option value="">전체 강의 접근</option>
+                </select></div>
+              <div class="form-group"><label>링크 유효기간</label>
+                <select id="sendExpires">
+                  <option value="24">24시간</option>
+                  <option value="48">48시간</option>
+                  <option value="72">72시간</option>
+                  <option value="168">7일</option>
+                </select>
+              </div>
+              <div class="form-group"><label>발송 방식</label>
+                <div class="radio-group">
+                  <label class="radio-opt"><input type="radio" name="sendType" value="sms" checked> SMS 문자</label>
+                  <label class="radio-opt"><input type="radio" name="sendType" value="kakao"> 카카오톡</label>
+                  <label class="radio-opt"><input type="radio" name="sendType" value="both"> SMS+카카오</label>
+                </div>
+              </div>
+
+              <!-- 미리보기 영역 -->
+              <div id="previewArea" class="hidden"
+                style="margin:15px 0;padding:15px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px">
+                <div style="font-size:12px;color:var(--muted);margin-bottom:8px">발송 메시지 미리보기 (링크 포함)</div>
+                <textarea id="previewMessage"
+                  style="width:100%;background:none;border:none;color:var(--text);font-family:monospace;font-size:13px;resize:none;min-height:120px"
+                  readonly></textarea>
+                <div style="margin-top:10px;font-size:12px;color:var(--accent)">* 위 링크를 클릭하여 수강생 화면을 미리 확인할 수 있습니다.
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-ghost" style="flex:1" onclick="previewMessage()">링크 생성 및 미리보기</button>
+                <button id="sendBtn" class="btn btn-primary" style="flex:1" onclick="doSend()" disabled>최종 발송하기</button>
+              </div>
+
+              <div class="send-result" id="sendResult">
+                <div style="color:var(--success);font-weight:700;margin-bottom:10px">발송 완료!</div>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:6px">시청 URL (직접 공유 가능)</div>
+                <div class="url-copy"><input id="watchUrlField" readonly><button class="btn btn-ghost btn-sm"
+                    style="white-space:nowrap" onclick="copyUrl()">복사</button></div>
+              </div>
+
+              <!-- 개발자 전용 빠른 테스트 -->
+              <div
+                style="margin-top:30px;padding:15px;background:rgba(255,255,255,0.02);border:1px dashed var(--border);border-radius:8px">
+                <div style="font-size:12px;color:var(--muted);margin-bottom:10px">🛠️ 개발자/테스트용 도구</div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:12px">링크 생성 없이 즉시 '이영희' 수강생의 시청 화면을 확인합니다.
+                </div>
+                <button class="btn btn-sm btn-ghost" style="width:100%;border:1px solid rgba(255,255,255,0.1)"
+                  onclick="window.open('/watch?token=test', '_blank')">테스트 시청 화면 바로 접속하기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 발송이력 -->
+        <div id="tab-logs" class="hidden">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h2>발송 이력</h2>
+              <p>메시지 발송 기록</p>
+            </div>
+          </div>
+          <div class="content-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>수강생</th>
+                    <th>전화번호</th>
+                    <th>방식</th>
+                    <th>상태</th>
+                    <th>발송시각</th>
+                  </tr>
+                </thead>
+                <tbody id="logsTable">
+                  <tr class="empty-row">
+                    <td colspan="5">이력 없음</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 발송이력 -->
-    <div id="tab-logs" class="hidden">
-      <div class="page-header"><div class="page-header-left"><h2>발송 이력</h2><p>메시지 발송 기록</p></div></div>
-      <div class="content-body">
-        <div class="table-wrap">
-          <table><thead><tr><th>수강생</th><th>전화번호</th><th>방식</th><th>상태</th><th>발송시각</th></tr></thead>
-          <tbody id="logsTable"><tr class="empty-row"><td colspan="5">이력 없음</td></tr></tbody></table>
-        </div>
+    <!-- 수강생 모달 -->
+    <div id="userModal" class="modal-bg hidden">
+      <div class="modal">
+        <h3 id="userModalTitle">수강생 등록</h3>
+        <input id="userModalId" type="hidden">
+        <div class="form-group"><label>이름 *</label><input id="uName" placeholder="홍길동"></div>
+        <div class="form-group"><label>전화번호 *</label><input id="uPhone" placeholder="01012345678"></div>
+        <div class="form-group"><label>이메일</label><input id="uEmail" type="email"></div>
+        <div class="form-group"><label>메모</label><textarea id="uMemo" rows="2"></textarea></div>
+        <div class="modal-footer"><button class="btn btn-ghost" onclick="closeUserModal()">취소</button><button
+            class="btn btn-primary" onclick="saveUser()">저장</button></div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- 수강생 모달 -->
-<div id="userModal" class="modal-bg hidden">
-  <div class="modal">
-    <h3 id="userModalTitle">수강생 등록</h3>
-    <input id="userModalId" type="hidden">
-    <div class="form-group"><label>이름 *</label><input id="uName" placeholder="홍길동"></div>
-    <div class="form-group"><label>전화번호 *</label><input id="uPhone" placeholder="01012345678"></div>
-    <div class="form-group"><label>이메일</label><input id="uEmail" type="email"></div>
-    <div class="form-group"><label>메모</label><textarea id="uMemo" rows="2"></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeUserModal()">취소</button><button class="btn btn-primary" onclick="saveUser()">저장</button></div>
-  </div>
-</div>
+    <!-- 동영상 모달 -->
+    <div id="videoModal" class="modal-bg hidden">
+      <div class="modal">
+        <h3 id="videoModalTitle">동영상 등록</h3>
+        <input id="videoModalId" type="hidden">
+        <div class="form-group"><label>제목 *</label><input id="vTitle"></div>
+        <div class="form-group"><label>동영상 URL * (mp4, m3u8 등)</label><input id="vUrl"
+            placeholder="https://cdn.example.com/video.mp4"></div>
+        <div class="form-group"><label>썸네일 URL</label><input id="vThumb"></div>
+        <div class="form-group"><label>카테고리</label><input id="vCategory" value="일반"></div>
+        <div class="form-group"><label>재생시간 (초)</label><input id="vDuration" type="number" placeholder="0"></div>
+        <div class="form-group"><label>설명</label><textarea id="vDesc" rows="3"></textarea></div>
+        <div class="modal-footer"><button class="btn btn-ghost" onclick="closeVideoModal()">취소</button><button
+            class="btn btn-primary" onclick="saveVideo()">저장</button></div>
+      </div>
+    </div>
 
-<!-- 동영상 모달 -->
-<div id="videoModal" class="modal-bg hidden">
-  <div class="modal">
-    <h3 id="videoModalTitle">동영상 등록</h3>
-    <input id="videoModalId" type="hidden">
-    <div class="form-group"><label>제목 *</label><input id="vTitle"></div>
-    <div class="form-group"><label>동영상 URL * (mp4, m3u8 등)</label><input id="vUrl" placeholder="https://cdn.example.com/video.mp4"></div>
-    <div class="form-group"><label>썸네일 URL</label><input id="vThumb"></div>
-    <div class="form-group"><label>카테고리</label><input id="vCategory" value="일반"></div>
-    <div class="form-group"><label>재생시간 (초)</label><input id="vDuration" type="number" placeholder="0"></div>
-    <div class="form-group"><label>설명</label><textarea id="vDesc" rows="3"></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeVideoModal()">취소</button><button class="btn btn-primary" onclick="saveVideo()">저장</button></div>
-  </div>
-</div>
+    <script>
+      const API = '/api';
+      let adminToken = localStorage.getItem('adminToken');
 
-<script>
-const API='/api';
-let adminToken=localStorage.getItem('adminToken');
+      window.onload = async () => {
+        const p = new URLSearchParams(location.search);
+        const wt = p.get('token');
+        if (wt) { show('watchPage'); await initWatch(wt); }
+        else if (adminToken) { show('adminPage'); loadDashboard(); }
+        else show('loginPage');
+        document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+      };
 
-window.onload=async()=>{
-  const p=new URLSearchParams(location.search);
-  const wt=p.get('token');
-  if(wt){show('watchPage');await initWatch(wt);}
-  else if(adminToken){show('adminPage');loadDashboard();}
-  else show('loginPage');
-  document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-};
+      function show(id) { ['loginPage', 'watchPage', 'adminPage'].forEach(p => document.getElementById(p) && document.getElementById(p).classList.toggle('hidden', p !== id)); }
 
-function show(id){['loginPage','watchPage','adminPage'].forEach(p=>document.getElementById(p).classList.toggle('hidden',p!==id));}
+      async function doLogin() {
+        const r = await af('/auth/admin-login', 'POST', { username: document.getElementById('loginId').value, password: document.getElementById('loginPw').value });
+        if (r.success) { adminToken = r.token; localStorage.setItem('adminToken', adminToken); show('adminPage'); loadDashboard(); }
+        else document.getElementById('loginError').style.display = 'block';
+      }
+      function doLogout() { localStorage.removeItem('adminToken'); adminToken = null; show('loginPage'); }
 
-async function doLogin(){
-  const r=await af('/auth/admin-login','POST',{username:document.getElementById('loginId').value,password:document.getElementById('loginPw').value});
-  if(r.success){adminToken=r.token;localStorage.setItem('adminToken',adminToken);show('adminPage');loadDashboard();}
-  else document.getElementById('loginError').style.display='block';
-}
-function doLogout(){localStorage.removeItem('adminToken');adminToken=null;show('loginPage');}
+      async function initWatch(token) {
+        const r = await af('/auth/verify-token', 'POST', { token });
+        if (!r.success) {
+          document.getElementById('watchBody').innerHTML = '<div class="error-box"><div class="icon">&#128274;</div><h2>' + (r.message || '접근 불가') + '</h2><p>유효하지 않거나 만료된 링크입니다.</p></div>';
+          return;
+        }
+        sessionStorage.setItem('userSession', r.session);
+        document.getElementById('watchUserBadge').textContent = r.user.name + '님 환영합니다';
 
-async function initWatch(token){
-  const r=await af('/auth/verify-token','POST',{token});
-  if(!r.success){
-    document.getElementById('watchBody').innerHTML='<div class="error-box"><div class="icon">&#128274;</div><h2>'+(r.message||'접근 불가')+'</h2><p>유효하지 않거나 만료된 링크입니다.</p></div>';
-    return;
-  }
-  sessionStorage.setItem('userSession',r.session);
-  document.getElementById('watchUserBadge').textContent=r.user.name+'님 환영합니다';
-  if(r.video){
-    document.getElementById('videoTitle').textContent=r.video.title;
-    document.getElementById('videoDesc').textContent=r.video.description||'';
-    document.getElementById('videoSrc').src=r.video.url;
-    document.getElementById('videoPlayer').load();
-    const pl=document.getElementById('videoPlayer');
-    let ls=0;
-    pl.addEventListener('timeupdate',()=>{if(pl.currentTime-ls>30){ls=pl.currentTime;saveProgress(r.video.id,Math.floor(pl.currentTime),false);}});
-    pl.addEventListener('ended',()=>saveProgress(r.video.id,Math.floor(pl.duration),true));
-  }else{
-    document.getElementById('videoTitle').textContent='전체 강의 접근';
-    document.getElementById('videoDesc').textContent='전체 강의에 접근하실 수 있습니다.';
-    document.getElementById('videoWrap').style.display='none';
-  }
-}
+        if (r.is_completed) {
+          document.getElementById('videoContainer').classList.add('hidden');
+          document.getElementById('completedBox').classList.remove('hidden');
+          document.getElementById('completedInfo').textContent = r.video ? '"' + r.video.title + '" 수강을 완료하셨습니다.' : '모든 학습을 완료하셨습니다.';
+          return;
+        }
 
-async function saveProgress(vid,wt,comp){
-  const s=sessionStorage.getItem('userSession');if(!s)return;
-  await fetch(API+'/video/progress',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+s},body:JSON.stringify({videoId:vid,watchTime:wt,completed:comp})});
-}
+        if (r.video) {
+          document.getElementById('videoTitle').textContent = r.video.title;
+          document.getElementById('videoDesc').textContent = r.video.description || '';
+          document.getElementById('videoSrc').src = r.video.url;
+          document.getElementById('videoPlayer').load();
+          const pl = document.getElementById('videoPlayer');
+          let ls = 0;
+          pl.addEventListener('timeupdate', () => { if (pl.currentTime - ls > 30) { ls = pl.currentTime; saveProgress(r.video.id, Math.floor(pl.currentTime), false); } });
+          pl.addEventListener('ended', () => {
+            saveProgress(r.video.id, Math.floor(pl.duration), false);
+            showQuiz(r.video.id);
+          });
+        } else {
+          document.getElementById('videoTitle').textContent = '전체 강의 접근';
+          document.getElementById('videoDesc').textContent = '전체 강의에 접근하실 수 있습니다.';
+          document.getElementById('videoWrap').style.display = 'none';
+        }
+      }
 
-function showTab(name){
-  ['dashboard','users','videos','send','logs'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hidden',t!==name));
-  document.querySelectorAll('.menu-item').forEach(el=>el.classList.toggle('active',el.dataset.tab===name));
-  ({dashboard:loadDashboard,users:loadUsers,videos:loadVideos,send:loadSendSelects,logs:loadLogs})[name]&&({dashboard:loadDashboard,users:loadUsers,videos:loadVideos,send:loadSendSelects,logs:loadLogs})[name]();
-}
+      async function saveProgress(vid, wt, comp) {
+        const s = sessionStorage.getItem('userSession'); if (!s) return;
+        await fetch(API + '/video/progress', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + s }, body: JSON.stringify({ videoId: vid, watchTime: wt, completed: comp }) });
+      }
 
-function af(path,method,body){
-  const o={method:method||'GET',headers:{'Content-Type':'application/json'}};
-  if(adminToken)o.headers['Authorization']='Bearer '+adminToken;
-  if(body)o.body=JSON.stringify(body);
-  return fetch(API+path,o).then(r=>r.json());
-}
+      const quizData = [
+        { q: "아동학대 발견 시 신고 기관으로 옳은 것은?", a: ["경찰청(112)", "수사기관", "아동보호전문기관", "모두 정답"], c: 3 },
+        { q: "아동학대 신고 의무자가 신고를 하지 않았을 때 처벌로 옳은 것은?", a: ["처벌 없음", "과태료 부과", "징역형", "경고"], c: 1 },
+        { q: "아동의 건강한 성장을 위해 보장되어야 할 기본 권리가 아닌 것은?", a: ["생존권", "보호권", "발달권", "차별권"], c: 3 },
+        { q: "신체적 학대뿐만 아니라 정서적 학대도 아동학대에 해당한다.", a: ["O", "X"], c: 0 },
+        { q: "아동학대 신고 시 신고자의 신분은 철저히 보장되어야 한다.", a: ["O", "X"], c: 0 }
+      ];
 
-async function loadDashboard(){
-  const r=await af('/admin/stats');if(!r.success)return;
-  const s=r.stats;
-  document.getElementById('statUsers').textContent=s.totalUsers;
-  document.getElementById('statVideos').textContent=s.totalVideos;
-  document.getElementById('statSent').textContent=s.totalSent;
-  document.getElementById('statViews').textContent=s.totalViews;
-  document.getElementById('recentSends').innerHTML=s.recentSends.length
-    ?s.recentSends.map(l=>'<tr><td>'+(l.name||'-')+'</td><td>'+l.phone+'</td><td>'+(l.send_type==='kakao'?'카카오':'SMS')+'</td><td><span class="tag '+(l.status==='success'||l.status==='dev_mock'?'tag-success':'tag-danger')+'">'+l.status+'</span></td><td>'+l.sent_at+'</td></tr>').join('')
-    :'<tr class="empty-row"><td colspan="5">이력 없음</td></tr>';
-}
+      let currentVideoId = null;
 
-async function loadUsers(){
-  const s=document.getElementById('userSearch').value;
-  const r=await af('/admin/users?search='+encodeURIComponent(s)+'&limit=100');
-  document.getElementById('usersTable').innerHTML=r.users&&r.users.length
-    ?r.users.map(u=>'<tr><td><input type="checkbox" class="userCheck" value="'+u.id+'"></td><td><strong>'+u.name+'</strong></td><td>'+u.phone+'</td><td>'+(u.email||'-')+'</td><td><span class="tag '+(u.is_active?'tag-success':'tag-danger')+'">'+(u.is_active?'활성':'비활성')+'</span></td><td>'+u.created_at.substring(0,10)+'</td><td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="editUser('+u.id+')">수정</button> <button class="btn btn-danger btn-sm" onclick="deleteUser('+u.id+')">삭제</button></td></tr>').join('')
-    :'<tr class="empty-row"><td colspan="7">수강생이 없습니다</td></tr>';
-}
+      function showQuiz(vid) {
+        currentVideoId = vid;
+        const list = document.getElementById('quizList');
+        list.innerHTML = quizData.map((d, i) => `
+        <div class="quiz-item" id="q-item-${i}">
+          <div class="quiz-q">${i + 1}. ${d.q}</div>
+          <div class="quiz-options">
+            ${d.a.map((opt, oi) => `
+              <label class="quiz-opt" onclick="selectQuizOpt(${i}, ${oi})">
+                <input type="radio" name="quiz-${i}" value="${oi}">
+                ${opt}
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+        document.getElementById('quizSection').classList.remove('hidden');
+        document.getElementById('quizResultSection').classList.add('hidden');
+        window.scrollTo({ top: document.getElementById('quizSection').offsetTop, behavior: 'smooth' });
+      }
 
-function toggleAllCheck(){const c=document.getElementById('checkAll').checked;document.querySelectorAll('.userCheck').forEach(x=>x.checked=c);}
+      function selectQuizOpt(qi, oi) {
+        const item = document.getElementById(`q-item-${qi}`);
+        item.querySelectorAll('.quiz-opt').forEach((el, i) => el.classList.toggle('selected', i === oi));
+        const radio = item.querySelectorAll('input[type="radio"]')[oi];
+        if (radio) radio.checked = true;
+      }
 
-function openUserModal(d){
-  document.getElementById('userModalTitle').textContent=d?'수강생 수정':'수강생 등록';
-  document.getElementById('userModalId').value=d?d.id:'';
-  document.getElementById('uName').value=d?d.name:'';
-  document.getElementById('uPhone').value=d?d.phone:'';
-  document.getElementById('uEmail').value=d?(d.email||''):'';
-  document.getElementById('uMemo').value=d?(d.memo||''):'';
-  document.getElementById('userModal').classList.remove('hidden');
-}
-function closeUserModal(){document.getElementById('userModal').classList.add('hidden');}
+      async function submitQuiz() {
+        let score = 0;
+        let unanswered = false;
+        quizData.forEach((d, i) => {
+          const sel = document.querySelector(`input[name="quiz-${i}"]:checked`);
+          if (sel) {
+            if (parseInt(sel.value) === d.c) score++;
+          } else {
+            unanswered = true;
+          }
+        });
 
-async function editUser(id){const r=await af('/admin/users/'+id);if(r.success)openUserModal(r.user);}
-async function saveUser(){
-  const id=document.getElementById('userModalId').value;
-  const b={name:document.getElementById('uName').value,phone:document.getElementById('uPhone').value,email:document.getElementById('uEmail').value,memo:document.getElementById('uMemo').value};
-  const r=await af('/admin/users'+(id?'/'+id:''),id?'PUT':'POST',b);
-  if(r.success){closeUserModal();loadUsers();}else alert(r.message);
-}
-async function deleteUser(id){if(!confirm('삭제하시겠습니까?'))return;await af('/admin/users/'+id,'DELETE');loadUsers();}
+        if (unanswered) return alert('모든 문제에 답해주세요.');
 
-async function loadVideos(){
-  const r=await af('/admin/videos');
-  const fmt=s=>s>0?Math.floor(s/60)+'분 '+(s%60)+'초':'-';
-  document.getElementById('videosTable').innerHTML=r.videos&&r.videos.length
-    ?r.videos.map(v=>'<tr><td><strong>'+v.title+'</strong></td><td>'+v.category+'</td><td>'+fmt(v.duration)+'</td><td><span class="tag '+(v.is_active?'tag-success':'tag-danger')+'">'+(v.is_active?'활성':'비활성')+'</span></td><td>'+v.created_at.substring(0,10)+'</td><td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="editVideo('+v.id+')">수정</button> <button class="btn btn-danger btn-sm" onclick="deleteVideo('+v.id+')">삭제</button></td></tr>').join('')
-    :'<tr class="empty-row"><td colspan="6">동영상이 없습니다</td></tr>';
-}
+        const pass = score >= 4;
+        const resPage = document.getElementById('quizResultContent');
 
-function openVideoModal(d){
-  document.getElementById('videoModalTitle').textContent=d?'동영상 수정':'동영상 등록';
-  document.getElementById('videoModalId').value=d?d.id:'';
-  document.getElementById('vTitle').value=d?d.title:'';
-  document.getElementById('vUrl').value=d?d.url:'';
-  document.getElementById('vThumb').value=d?(d.thumbnail||''):'';
-  document.getElementById('vCategory').value=d?d.category:'일반';
-  document.getElementById('vDuration').value=d?d.duration:0;
-  document.getElementById('vDesc').value=d?(d.description||''):'';
-  document.getElementById('videoModal').classList.remove('hidden');
-}
-function closeVideoModal(){document.getElementById('videoModal').classList.add('hidden');}
+        if (pass) {
+          await saveProgress(currentVideoId, 0, true);
+          resPage.innerHTML = `
+          <div class="result-box result-pass">
+            <div style="font-size:64px; margin-bottom:20px;">🎉</div>
+            <h2 style="font-size:24px; font-weight:800; color:var(--success); margin-bottom:12px;">축하합니다! 합격입니다.</h2>
+            <p style="color:var(--muted); margin-bottom:24px;">점수: ${score} / ${quizData.length}<br>교육 이수가 완료되었습니다.</p>
+            <button class="btn btn-primary" onclick="location.reload()" style="width:100%">메인으로 돌아가기</button>
+          </div>
+        `;
+        } else {
+          resPage.innerHTML = `
+          <div class="result-box result-fail">
+            <div style="font-size:64px; margin-bottom:20px;">⚠️</div>
+            <h2 style="font-size:24px; font-weight:800; color:var(--danger); margin-bottom:12px;">불합격입니다.</h2>
+            <p style="color:var(--muted); margin-bottom:24px;">점수: ${score} / ${quizData.length}<br>80점(4문제) 이상 맞춰야 완료됩니다.</p>
+            <button class="btn btn-danger" onclick="showQuiz(currentVideoId)" style="width:100%">다시 도전하기</button>
+          </div>
+        `;
+        }
+        document.getElementById('quizSection').classList.add('hidden');
+        document.getElementById('quizResultSection').classList.remove('hidden');
+        window.scrollTo({ top: document.getElementById('quizResultSection').offsetTop, behavior: 'smooth' });
+      }
 
-async function editVideo(id){
-  const r=await af('/admin/videos');const v=r.videos.find(x=>x.id===id);if(v)openVideoModal(v);
-}
-async function saveVideo(){
-  const id=document.getElementById('videoModalId').value;
-  const b={title:document.getElementById('vTitle').value,url:document.getElementById('vUrl').value,thumbnail:document.getElementById('vThumb').value,category:document.getElementById('vCategory').value,duration:Number(document.getElementById('vDuration').value),description:document.getElementById('vDesc').value};
-  const r=await af('/admin/videos'+(id?'/'+id:''),id?'PUT':'POST',b);
-  if(r.success){closeVideoModal();loadVideos();}else alert(r.message);
-}
-async function deleteVideo(id){if(!confirm('삭제하시겠습니까?'))return;await af('/admin/videos/'+id,'DELETE');loadVideos();}
+      function showTab(name) {
+        ['dashboard', 'users', 'videos', 'send', 'logs'].forEach(t => document.getElementById('tab-' + t).classList.toggle('hidden', t !== name));
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.toggle('active', el.dataset.tab === name));
+        ({ dashboard: loadDashboard, users: loadUsers, videos: loadVideos, send: loadSendSelects, logs: loadLogs })[name] && ({ dashboard: loadDashboard, users: loadUsers, videos: loadVideos, send: loadSendSelects, logs: loadLogs })[name]();
+      }
 
-async function loadSendSelects(){
-  const [ur,vr]=await Promise.all([af('/admin/users?limit=500'),af('/admin/videos')]);
-  document.getElementById('sendUser').innerHTML='<option value="">-- 수강생 선택 --</option>'+(ur.users||[]).map(u=>'<option value="'+u.id+'">'+u.name+' ('+u.phone+')</option>').join('');
-  document.getElementById('sendVideo').innerHTML='<option value="">전체 강의 접근</option>'+(vr.videos||[]).map(v=>'<option value="'+v.id+'">'+v.title+'</option>').join('');
-}
-async function doSend(){
-  const uid=document.getElementById('sendUser').value;if(!uid)return alert('수강생을 선택하세요');
-  const vid=document.getElementById('sendVideo').value||null;
-  const exp=document.getElementById('sendExpires').value;
-  const stype=document.querySelector('input[name=sendType]:checked').value;
-  const r=await af('/message/send','POST',{userId:Number(uid),videoId:vid?Number(vid):null,sendType:stype,expiresHours:Number(exp)});
-  if(r.success){document.getElementById('watchUrlField').value=r.watchUrl;document.getElementById('sendResult').style.display='block';}
-  else alert('발송 실패: '+r.message);
-}
-function copyUrl(){const e=document.getElementById('watchUrlField');e.select();document.execCommand('copy');alert('URL이 복사되었습니다!');}
-function sendSelectedUsers(){const ids=[...document.querySelectorAll('.userCheck:checked')].map(c=>Number(c.value));if(!ids.length)return alert('수강생을 선택하세요');showTab('send');}
+      function af(path, method, body) {
+        const o = { method: method || 'GET', headers: { 'Content-Type': 'application/json' } };
+        if (adminToken) o.headers['Authorization'] = 'Bearer ' + adminToken;
+        if (body) o.body = JSON.stringify(body);
+        return fetch(API + path, o).then(r => r.json());
+      }
 
-async function loadLogs(){
-  const r=await af('/message/logs?limit=100');
-  document.getElementById('logsTable').innerHTML=r.logs&&r.logs.length
-    ?r.logs.map(l=>'<tr><td>'+(l.user_name||'-')+'</td><td>'+l.phone+'</td><td>'+(l.send_type==='kakao'?'카카오':'SMS')+'</td><td><span class="tag '+(l.status==='success'||l.status==='dev_mock'?'tag-success':'tag-danger')+'">'+l.status+'</span></td><td>'+l.sent_at+'</td></tr>').join('')
-    :'<tr class="empty-row"><td colspan="5">이력 없음</td></tr>';
-}
-</script>
+      async function loadDashboard() {
+        const r = await af('/admin/stats'); if (!r.success) return;
+        const s = r.stats;
+        document.getElementById('statUsers').textContent = s.totalUsers;
+        document.getElementById('statVideos').textContent = s.totalVideos;
+        document.getElementById('statSent').textContent = s.totalSent;
+        document.getElementById('statViews').textContent = s.totalViews;
+        document.getElementById('recentSends').innerHTML = s.recentSends.length
+          ? s.recentSends.map(l => '<tr><td>' + (l.name || '-') + '</td><td>' + l.phone + '</td><td>' + (l.send_type === 'kakao' ? '카카오' : 'SMS') + '</td><td><span class="tag ' + (l.status === 'success' || l.status === 'dev_mock' ? 'tag-success' : 'tag-danger') + '">' + l.status + '</span></td><td>' + l.sent_at + '</td></tr>').join('')
+          : '<tr class="empty-row"><td colspan="5">이력 없음</td></tr>';
+      }
+
+      async function loadUsers() {
+        const s = document.getElementById('userSearch').value;
+        const r = await af('/admin/users?search=' + encodeURIComponent(s) + '&limit=100');
+        document.getElementById('usersTable').innerHTML = r.users && r.users.length
+          ? r.users.map(u => '<tr><td><input type="checkbox" class="userCheck" value="' + u.id + '"></td><td><strong>' + u.name + '</strong></td><td>' + u.phone + '</td><td>' + (u.email || '-') + '</td><td><span class="tag ' + (u.is_active ? 'tag-success' : 'tag-danger') + '">' + (u.is_active ? '활성' : '비활성') + '</span></td><td>' + u.created_at.substring(0, 10) + '</td><td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="editUser(' + u.id + ')">수정</button> <button class="btn btn-danger btn-sm" onclick="deleteUser(' + u.id + ')">삭제</button></td></tr>').join('')
+          : '<tr class="empty-row"><td colspan="7">수강생이 없습니다</td></tr>';
+      }
+
+      function toggleAllCheck() { const c = document.getElementById('checkAll').checked; document.querySelectorAll('.userCheck').forEach(x => x.checked = c); }
+
+      function openUserModal(d) {
+        document.getElementById('userModalTitle').textContent = d ? '수강생 수정' : '수강생 등록';
+        document.getElementById('userModalId').value = d ? d.id : '';
+        document.getElementById('uName').value = d ? d.name : '';
+        document.getElementById('uPhone').value = d ? d.phone : '';
+        document.getElementById('uEmail').value = d ? (d.email || '') : '';
+        document.getElementById('uMemo').value = d ? (d.memo || '') : '';
+        document.getElementById('userModal').classList.remove('hidden');
+      }
+      function closeUserModal() { document.getElementById('userModal').classList.add('hidden'); }
+
+      async function editUser(id) { const r = await af('/admin/users/' + id); if (r.success) openUserModal(r.user); }
+      async function saveUser() {
+        const id = document.getElementById('userModalId').value;
+        const b = { name: document.getElementById('uName').value, phone: document.getElementById('uPhone').value, email: document.getElementById('uEmail').value, memo: document.getElementById('uMemo').value };
+        const r = await af('/admin/users' + (id ? '/' + id : ''), id ? 'PUT' : 'POST', b);
+        if (r.success) { closeUserModal(); loadUsers(); } else alert(r.message);
+      }
+      async function deleteUser(id) { if (!confirm('삭제하시겠습니까?')) return; await af('/admin/users/' + id, 'DELETE'); loadUsers(); }
+
+      async function loadVideos() {
+        const r = await af('/admin/videos');
+        const fmt = s => s > 0 ? Math.floor(s / 60) + '분 ' + (s % 60) + '초' : '-';
+        document.getElementById('videosTable').innerHTML = r.videos && r.videos.length
+          ? r.videos.map(v => '<tr><td><strong>' + v.title + '</strong></td><td>' + v.category + '</td><td>' + fmt(v.duration) + '</td><td><span class="tag ' + (v.is_active ? 'tag-success' : 'tag-danger') + '">' + (v.is_active ? '활성' : '비활성') + '</span></td><td>' + v.created_at.substring(0, 10) + '</td><td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="editVideo(' + v.id + ')">수정</button> <button class="btn btn-danger btn-sm" onclick="deleteVideo(' + v.id + ')">삭제</button></td></tr>').join('')
+          : '<tr class="empty-row"><td colspan="6">동영상이 없습니다</td></tr>';
+      }
+
+      function openVideoModal(d) {
+        document.getElementById('videoModalTitle').textContent = d ? '동영상 수정' : '동영상 등록';
+        document.getElementById('videoModalId').value = d ? d.id : '';
+        document.getElementById('vTitle').value = d ? d.title : '';
+        document.getElementById('vUrl').value = d ? d.url : '';
+        document.getElementById('vThumb').value = d ? (d.thumbnail || '') : '';
+        document.getElementById('vCategory').value = d ? d.category : '일반';
+        document.getElementById('vDuration').value = d ? d.duration : 0;
+        document.getElementById('vDesc').value = d ? (d.description || '') : '';
+        document.getElementById('videoModal').classList.remove('hidden');
+      }
+      function closeVideoModal() { document.getElementById('videoModal').classList.add('hidden'); }
+
+      async function editVideo(id) {
+        const r = await af('/admin/videos'); const v = r.videos.find(x => x.id === id); if (v) openVideoModal(v);
+      }
+      async function saveVideo() {
+        const id = document.getElementById('videoModalId').value;
+        const b = { title: document.getElementById('vTitle').value, url: document.getElementById('vUrl').value, thumbnail: document.getElementById('vThumb').value, category: document.getElementById('vCategory').value, duration: Number(document.getElementById('vDuration').value), description: document.getElementById('vDesc').value };
+        const r = await af('/admin/videos' + (id ? '/' + id : ''), id ? 'PUT' : 'POST', b);
+        if (r.success) { closeVideoModal(); loadVideos(); } else alert(r.message);
+      }
+      async function deleteVideo(id) { if (!confirm('삭제하시겠습니까?')) return; await af('/admin/videos/' + id, 'DELETE'); loadVideos(); }
+
+      let currentPreviewToken = null;
+      let currentPreviewTokenId = null;
+
+      async function loadSendSelects() {
+        const [ur, vr] = await Promise.all([af('/admin/users?limit=500'), af('/admin/videos')]);
+        document.getElementById('sendUser').innerHTML = '<option value="">-- 수강생 선택 --</option>' + (ur.users || []).map(u => '<option value="' + u.id + '">' + u.name + ' (' + u.phone + ')</option>').join('');
+        document.getElementById('sendVideo').innerHTML = '<option value="">전체 강의 접근</option>' + (vr.videos || []).map(v => '<option value="' + v.id + '">' + v.title + '</option>').join('');
+      }
+
+      async function previewMessage() {
+        const uid = document.getElementById('sendUser').value;
+        const vid = document.getElementById('sendVideo').value || null;
+        const exp = document.getElementById('sendExpires').value;
+        if (!uid) return alert('수강생을 선택하세요');
+
+        const r = await af('/message/preview', 'POST', { userId: Number(uid), videoId: vid ? Number(vid) : null, expiresHours: Number(exp) });
+        if (r.success) {
+          document.getElementById('previewArea').classList.remove('hidden');
+          document.getElementById('previewMessage').value = r.messageBody;
+          document.getElementById('sendBtn').disabled = false;
+          currentPreviewToken = r.token;
+          currentPreviewTokenId = r.tokenId;
+          // 미리보기 텍스트 안의 링크 클릭 가능하도록 처리 (선택사항)
+        } else alert('미리보기 생성 실패: ' + r.message);
+      }
+
+      async function doSend() {
+        if (!confirm('정말로 발송하시겠습니까?')) return;
+        const uid = document.getElementById('sendUser').value;
+        const vid = document.getElementById('sendVideo').value || null;
+        const stype = document.querySelector('input[name=sendType]:checked').value;
+
+        const r = await af('/message/send', 'POST', {
+          userId: Number(uid),
+          videoId: vid ? Number(vid) : null,
+          sendType: stype,
+          token: currentPreviewToken,
+          tokenId: currentPreviewTokenId
+        });
+
+        if (r.success) {
+          document.getElementById('watchUrlField').value = currentPreviewToken ? (location.origin + '/watch?token=' + currentPreviewToken) : '';
+          document.getElementById('sendResult').style.display = 'block';
+          document.getElementById('previewArea').classList.add('hidden');
+          document.getElementById('sendBtn').disabled = true;
+          currentPreviewToken = null;
+          currentPreviewTokenId = null;
+          alert('발송 완료되었습니다.');
+        }
+        else alert('발송 실패: ' + r.message);
+      }
+      function copyUrl() { const e = document.getElementById('watchUrlField'); e.select(); document.execCommand('copy'); alert('URL이 복사되었습니다!'); }
+      function sendSelectedUsers() { const ids = [...document.querySelectorAll('.userCheck:checked')].map(c => Number(c.value)); if (!ids.length) return alert('수강생을 선택하세요'); showTab('send'); }
+
+      async function loadLogs() {
+        const r = await af('/message/logs?limit=100');
+        document.getElementById('logsTable').innerHTML = r.logs && r.logs.length
+          ? r.logs.map(l => '<tr><td>' + (l.user_name || '-') + '</td><td>' + l.phone + '</td><td>' + (l.send_type === 'kakao' ? '카카오' : 'SMS') + '</td><td><span class="tag ' + (l.status === 'success' || l.status === 'dev_mock' ? 'tag-success' : 'tag-danger') + '">' + l.status + '</span></td><td>' + l.sent_at + '</td></tr>').join('')
+          : '<tr class="empty-row"><td colspan="5">이력 없음</td></tr>';
+      }
+    </script>
 </body>
+
 </html>

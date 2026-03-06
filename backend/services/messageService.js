@@ -33,11 +33,12 @@ async function logMessage({ userId, tokenId, phone, sendType, message, status, r
     .from('send_logs')
     .insert([{
       user_id: userId || null,
-      // token_id 필드가 스키마에 없을 수 있으므로 확인 필요 (없으면 뺌)
-      // phone: phone, // 스키마에 phone이 없으면 제외
+      token_id: tokenId || null,
+      send_type: sendType,
+      phone: phone,
+      message: message,
       status: status,
-      message_id: response?.messageId || null,
-      // response: JSON.stringify(response) // 스키마에 response 필드 없음
+      message_id: response?.messageId || null
     }]);
 }
 
@@ -100,8 +101,10 @@ async function sendKakao({ phone, variables, userId, tokenId }) {
   }
 }
 
-async function sendVideoLink({ userId, tokenId, token, phone, userName, videoTitle, sendType }) {
-  const url = SERVICE_BASE_URL + '/watch?token=' + token;
+async function sendVideoLink({ userId, tokenId, token, phone, userName, videoTitle, sendType, baseUrl }) {
+  // 전달받은 baseUrl이 있으면 사용, 없으면 환경변수나 기본값 사용
+  const finalBaseUrl = baseUrl || process.env.SERVICE_BASE_URL || 'http://localhost:3099';
+  const url = finalBaseUrl + '/watch?token=' + token;
 
   if (sendType === 'kakao') {
     return sendKakao({

@@ -41,9 +41,8 @@ router.post('/progress', userAuth, async (req, res) => {
       user_id: userId,
       video_id: videoId,
       token_id: tokenId || null,
-      duration: watchTime || 0, // Mock DB에서는 watch_time이었으나 스키마에는 duration으로 정의함 (수정하거나 맞춤)
-      // completed 필드는 스키마에 없었으므로 여기서는 duration에 합치거나 스키마를 보강해야 함
-      // 일단 duration(시청 시간)만 기록
+      duration: watchTime || 0,
+      completed: completed ? 1 : 0
     }]);
 
   res.json({ success: true });

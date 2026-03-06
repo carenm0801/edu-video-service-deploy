@@ -11,29 +11,22 @@ const supabase = require('../models/db');
 const { adminAuth } = require('../middleware/auth');
 const { sendVideoLink } = require('../services/messageService');
 
-// 개별 발송
-router.post('/send', adminAuth, async (req, res) => {
-  const { userId, videoId, sendType = 'sms', expiresHours = 24 } = req.body;
+// 발송 전 미리보기 (토큰 생성 및 메시지 내용 확인)
+router.post('/preview', adminAuth, async (req, res) => {
+  const { userId, videoId, expiresHours = 24 } = req.body;
 
   const { data: user } = await supabase
     .from('users')
     .select('*')
     .eq('id', userId)
-    .eq('is_active', 1)
     .single();
 
   if (!user) return res.status(404).json({ success: false, message: '수강생 없음' });
 
   let video = null;
   if (videoId) {
-    const { data } = await supabase
-      .from('videos')
-      .select('*')
-      .eq('id', videoId)
-      .eq('is_active', 1)
-      .single();
+    const { data } = await supabase.from('videos').select('*').eq('id', videoId).single();
     video = data;
-    if (!video) return res.status(404).json({ success: false, message: '동영상 없음' });
   }
 
   const token = uuidv4();
@@ -52,14 +45,77 @@ router.post('/send', adminAuth, async (req, res) => {
 
   if (tokenError) return res.status(500).json({ success: false, message: '토큰 생성 실패' });
 
+  // 서비스 베이스 URL 결정 (환경 변수 우선, 없으면 현재 요청 도메인 사용)
+  const protocol = req.headers['x-forwarded-proto'] || 'http';
+  const host = req.headers.host;
+  const baseUrl = process.env.SERVICE_BASE_URL || `${protocol}://${host}`;
+  const watchUrl = baseUrl + '/watch?token=' + token;
+  const videoTitle = video ? video.title : '전체 강의';
+  const messageBody = `[교육동영상]\n${user.name}님 안녕하세요!\n"${videoTitle}" 강의 링크입니다.\n\n${watchUrl}\n\n링크는 ${expiresHours}시간 유효합니다.`;
+
+  res.json({
+    success: true,
+    token,
+    tokenId: tokenResult.id, // DB상의 ID 추가
+    watchUrl,
+    messageBody,
+    user: { name: user.name, phone: user.phone },
+    video: video ? { title: video.title } : null
+  });
+});
+
+// 개별 발송
+router.post('/send', adminAuth, async (req, res) => {
+  const { userId, videoId, sendType = 'sms', expiresHours = 24, tokenId, token } = req.body;
+
+  // 서비스 베이스 URL 결정
+  const protocol = req.headers['x-forwarded-proto'] || 'http';
+  const host = req.headers.host;
+  const baseUrl = process.env.SERVICE_BASE_URL || `${protocol}://${host}`;
+
+  // 이미 생성된 토큰이 있으면 해당 정보 사용, 없으면 새로 생성 (하위 호환)
+  let finalTokenId = tokenId;
+  let finalTokenValue = token;
+  let user = null;
+  let video = null;
+
+  if (!finalTokenId || !finalTokenValue) {
+    const { data: u } = await supabase.from('users').select('*').eq('id', userId).single();
+    user = u;
+    if (!user) return res.status(404).json({ success: false, message: '수강생 없음' });
+
+    if (videoId) {
+      const { data: v } = await supabase.from('videos').select('*').eq('id', videoId).single();
+      video = v;
+    }
+
+    const t = uuidv4();
+    const expiresAt = new Date(Date.now() + expiresHours * 3600000).toISOString();
+    const { data: tr, error: te } = await supabase
+      .from('access_tokens')
+      .insert([{ token: t, user_id: userId, video_id: videoId || null, expires_at: expiresAt }])
+      .select().single();
+    if (te) return res.status(500).json({ success: false, message: '토큰 생성 실패' });
+    finalTokenId = tr.id;
+    finalTokenValue = t;
+  } else {
+    // 미리보기에서 전달된 토큰 사용 시 사용자/비디오 정보 다시 확인
+    const { data: u } = await supabase.from('users').select('*').eq('id', userId).single();
+    user = u;
+    if (videoId) {
+      const { data: v } = await supabase.from('videos').select('*').eq('id', videoId).single();
+      video = v;
+    }
+  }
+
   try {
     await sendVideoLink({
-      userId, tokenId: tokenResult.id, token,
+      userId, tokenId: finalTokenId, token: finalTokenValue,
       phone: user.phone, userName: user.name,
-      videoTitle: video ? video.title : '전체 강의', sendType
+      videoTitle: video ? video.title : '전체 강의', sendType,
+      baseUrl // 도메인 정보 전달
     });
-    const watchUrl = (process.env.SERVICE_BASE_URL || 'http://localhost:3099') + '/watch?token=' + token;
-    res.json({ success: true, message: '발송 완료', token, expiresAt, watchUrl });
+    res.json({ success: true, message: '발송 완료' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
