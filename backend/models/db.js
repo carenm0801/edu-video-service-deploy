@@ -9,10 +9,12 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ Supabase 설정이 없습니다. .env 파일을 확인하세요.');
+  console.error('❌ Supabase 환경 변수가 설정되지 않았습니다. Vercel 설정에서 SUPABASE_URL과 SUPABASE_ANON_KEY를 추가해주세요.');
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = (supabaseUrl && supabaseKey)
+  ? createClient(supabaseUrl, supabaseKey)
+  : { from: () => ({ select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: new Error('DB Not Initialized') }) }) }) }) }; // Fallback to avoid crash
 
 // 헬퍼 함수들 (기존 로직과 최대한 비슷하게 사용하기 위함)
 const db = {

@@ -74,7 +74,7 @@ router.post('/verify-token', async (req, res) => {
       .update({
         is_used: 1,
         used_at: new Date().toISOString(),
-        ip_address: req.ip || req.connection.remoteAddress
+        ip_address: req.ip || (req.connection && req.connection.remoteAddress) || 'unknown'
       })
       .eq('id', row.id);
   }
