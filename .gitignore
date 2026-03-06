@@ -1,0 +1,10 @@
+node_modules
+.env
+*.db
+*.log
+.vscode
+.DS_Store
+dist
+build
+frontend/node_modules
+C:\Users\kdonn\.gemini\antigravity\brain
